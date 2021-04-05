@@ -96,7 +96,7 @@ let package = Package(
     .executable(name: "my-benchmark", targets: ["MyBenchmark"]),
   ],
   dependencies: [
-    .package(url: "https://github.com/apple/swift-collections-benchmarks", from: "0.0.1"),
+    .package(url: "https://github.com/apple/swift-collections-benchmark", from: "0.0.1"),
     // ... other dependencies ...
   ],
   targets: [
