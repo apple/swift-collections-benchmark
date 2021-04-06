@@ -68,12 +68,8 @@ extension Task {
     // we run short tasks multiple times, and we adjust iteration counts as
     // we go.
 
-    let (firstTime, hasNestedMeasurement) =
-      Timer._measureFirst(instance)
-
-    precondition(firstTime > .zero,
-                 "Task '\(title)' at size \(size) measured at zero seconds")
-
+    let (firstTime, hasNestedMeasurement) = Timer._measureFirst(instance)
+    
     if hasNestedMeasurement {
       // We can't do iterating measurements. Loop over individual
       // measurements until we satisfy requirements.
