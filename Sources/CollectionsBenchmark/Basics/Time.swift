@@ -144,3 +144,9 @@ extension Time {
     return Time(seconds / TimeInterval(size.rawValue))
   }
 }
+
+extension Time {
+  internal func _orIfZero(_ time: Time) -> Time {
+    self > .zero ? self : time
+  }
+}

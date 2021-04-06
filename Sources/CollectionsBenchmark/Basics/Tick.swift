@@ -28,6 +28,16 @@ public struct Tick {
     precondition(r == 0, "clock_gettime failure")
     return Tick(_value: now)
   }
+  
+  public static var resolution: Time {
+    guard #available(macOS 10.12, iOS 10.0, tvOS 10.0, watchOS 3.0, *) else {
+      fatalError("Please enable USE_FOUNDATION_DATE")
+    }
+    var res = timespec()
+    let r = clock_getres(CLOCK_MONOTONIC_RAW, &res)
+    precondition(r == 0, "clock_getres failure")
+    return Tick(_value: res).elapsedTime(since: Tick(_value: timespec(tv_sec: 0, tv_nsec: 0)))
+  }
 
   public func elapsedTime(since start: Tick) -> Time {
     let s = Double(_value.tv_sec - start._value.tv_sec)
@@ -53,6 +63,10 @@ public struct Tick {
 
   public func elapsedTime(since start: Tick) -> Time {
     Time(Double(_value.timeIntervalSince(start._value)))
+  }
+  
+  public static var resolution: Time {
+    .nanosecond
   }
 }
 #endif
