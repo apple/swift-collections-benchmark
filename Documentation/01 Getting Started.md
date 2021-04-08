@@ -30,7 +30,15 @@ This is where this package comes in -- it lets us easily create, run, and analyz
 
 ### Defining Benchmarks
 
-To add benchmarks, we can simply put our implementation in a new executable target, and type the following code into its `main.swift` file:
+The `CollectionsBenchmark` library makes it easy to add an executable target for running, collecting, visualizing, and comparing benchmarks from the command line.
+To create a benchmark CLI tool, create a main.swift file and within it:
+
+1. Import `CollectionsBenchmark`.
+2. Create a `Benchmark` instance with an appropriate title.
+3. Add a benchmark to this instance using the `addSimple` method to configure the benchmark with a closure to execute.
+4. Invoke `benchmark.main()` to use the library's CLI features.
+
+This is illustrated in the following example, included as [`main.swift`](./Example/Sources/kalimba-benchmark/main.swift) in the [`Documentation/Example` directory](./Example) of this project:
 
 ```swift
 import CollectionsBenchmark
@@ -57,6 +65,7 @@ That's all we needed to write -- we now have a helpful benchmark utility that we
 [Swift Argument Parser]: https://github.com/apple/swift-argument-parser
 
 ### Running Benchmarks
+
 Here is how we can use this tool to run our benchmark, collecting data into a file called `results`. By default, the tool measures execution time for sizes between 1 and and 1,000,000.
 
 ```shellsession
@@ -81,6 +90,7 @@ If it takes too long to run the benchmarks, feel free to stop them at any point 
 Be sure to explore the `--help` output to get to know what you can control! (There are so many options...)
 
 ### Visualizing Results
+
 The generated `results` file is text file in a simple JSON format, containing all the data you collected. This is useful for machines, but unfortunately it's pretty hard for a human to analyze data in this form -- so we need to visualize it somehow. Luckily, there is a command for that:
 
 ```shellsession
@@ -96,7 +106,7 @@ Here is how the resulting graph looks with the results I've just collected:
 
 By default, the tool generates log-log charts showing the average processing time spent on each individual input item. These may look weird at first, but I find this format produces the most useful overview of the underlying data.
 
-The chart shows that the average time spent on each element initially starts high, then goes down until the input size reaches a certain size. This is pretty typical -- it just means that there is some sort of constant(ish) overhead (allocation costs, etc.) that is a significant component of the overall runtime at small sizes, but its cost gradually becomes insignificant as we have more elements to process. 
+The chart shows that the average time spent on each element initially starts high, then goes down until the input size reaches a certain size. This is pretty typical -- it just means that there is some sort of constant(ish) overhead (allocation costs, etc.) that is a significant component of the overall runtime at small sizes, but its cost gradually becomes insignificant as we have more elements to process.
 
 For input counts above 256 elements or so, our `kalimbaOrdered` curve looks like a straight(ish) line, roughly doubling in time every time we double the input size -- this slope indicates that the per-element execution time is linear, which means that the overall time to process all items is quadratic. So we've confirmed our original estimate.
 
@@ -185,7 +195,7 @@ The `results compare` command gets even more powerful once we have more than one
 
 ### Benchmark Libraries
 
-If you're anything like me, once you get the hang of writing benchmarks, it's difficult to stop. For example, the `Collections` package has several hundred (and counting!) benchmark definitions, each capturing a different aspect of data structure behavior. 
+If you're anything like me, once you get the hang of writing benchmarks, it's difficult to stop. For example, the `Collections` package has several hundred (and counting!) benchmark definitions, each capturing a different aspect of data structure behavior.
 
 With so many benchmarks, we need a way to organize them into a series of thematic charts that make sense -- trying to render them all on a single chart makes for interesting glitch art, but it isn't very practical:
 
@@ -230,7 +240,7 @@ For example, here is a snippet from [the small chart library][announcement-libra
 
 The `library run` and `library render` commands can be used to collect data and to render the library:
 
-```
+```shellsession
 $ swift-collections-benchmark library run results.json --library Library.json --max-size 16M --cycles 20
 $ swift-collections-benchmark library render results.json --library Library.json --max-time 10us --min-time 1ns --theme-file Theme.json --percentile 90 --output .
 ```
