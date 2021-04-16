@@ -23,18 +23,18 @@ public struct Stroke: Hashable, Codable {
     case bevel
   }
   public struct Dash: Hashable, Codable {
-    public var style: [CGFloat]
-    public var phase: CGFloat = 0
+    public var style: [Double]
+    public var phase: Double = 0
   }
 
-  public var width: CGFloat
+  public var width: Double
   public var color: Color
   public var dash: Dash?
   public var capStyle: CapStyle
   public var joinStyle: JoinStyle
 
   public init(
-    width: CGFloat,
+    width: Double,
     color: Color,
     dash: Dash? = nil,
     capStyle: CapStyle = .round,

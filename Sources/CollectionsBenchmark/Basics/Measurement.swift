@@ -9,15 +9,14 @@
 //
 //===----------------------------------------------------------------------===//
 
-import Foundation
+/// A point in the document coordinate system, i.e., a pair of size and
+/// time values.
+public struct Measurement: Hashable, Codable {
+  public let size: Size
+  public let time: Time
 
-public struct Font: Hashable, Codable, CustomStringConvertible {
-  public var family: String
-  public var size: Double
-  public var isBold = false
-  public var isItalic = false
-
-  public var description: String {
-    "'\(family)' at size \(size)"
+  public init(size: Size, time: Time) {
+    self.size = size
+    self.time = time
   }
 }

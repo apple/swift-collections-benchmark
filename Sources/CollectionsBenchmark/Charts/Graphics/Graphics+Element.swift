@@ -9,13 +9,11 @@
 //
 //===----------------------------------------------------------------------===//
 
-import Foundation // For CGPoint, CGRect
-
 extension Graphics {
   public enum Element {
     case shape(Shape)
     case text(Text)
-    case group(clippingRect: CGRect, [Element])
+    case group(clippingRect: Rectangle, [Element])
   }
 }
 
@@ -30,7 +28,7 @@ extension Graphics.Element: Codable {
       self = .text(try container.decode(Text.self))
     case "group":
       self = .group(
-        clippingRect: try container.decode(CGRect.self),
+        clippingRect: try container.decode(Rectangle.self),
         try container.decode([Self].self))
     default:
       throw DecodingError.dataCorruptedError(

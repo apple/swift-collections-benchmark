@@ -9,15 +9,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-import Foundation
-
-public struct Font: Hashable, Codable, CustomStringConvertible {
-  public var family: String
-  public var size: Double
-  public var isBold = false
-  public var isItalic = false
-
-  public var description: String {
-    "'\(family)' at size \(size)"
-  }
+extension BenchmarkResults {
+  // Deprecated since 0.0.2
+  @available(*, deprecated, renamed: "Measurement")
+  public typealias Point = Measurement
 }

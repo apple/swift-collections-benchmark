@@ -39,18 +39,17 @@ public struct DefaultRenderer: Renderer {
   public func measure(
     _ font: Font,
     _ text: String
-  ) -> (size: CGSize, descender: CGFloat) {
-    let unitAdvancement = CGSize(width: 0.60009765625, height: 1.1328125)
-    let unitDescender: CGFloat = 0.30029296875
+  ) -> (width: Double, height: Double, descender: Double) {
+    let unitAdvancement = Vector(dx: 0.60009765625, dy: 1.1328125)
+    let unitDescender = 0.30029296875
 
-    let width = CGFloat(text.count) * font.size * unitAdvancement.width
-    let height = font.size * unitAdvancement.height
+    let width = Double(text.count) * font.size * unitAdvancement.dx
+    let height = font.size * unitAdvancement.dy
     let descender = unitDescender * font.size
 
     return (
-      size: CGSize(
-        width: width.rounded(.up),
-        height: height.rounded(.up)),
+      width: width.rounded(.up),
+      height: height.rounded(.up),
       descender: descender)
   }
 
@@ -60,7 +59,7 @@ public struct DefaultRenderer: Renderer {
   public func render(
     _ graphics: Graphics,
     format: String,
-    bitmapScale: CGFloat
+    bitmapScale: Double
   ) throws -> Data {
     switch format.lowercased() {
     case "json":

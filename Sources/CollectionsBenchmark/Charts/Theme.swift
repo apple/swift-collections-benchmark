@@ -39,26 +39,26 @@ public struct Theme: Codable {
   public var axisLabels = Text.Style(
     font: Font(family: "Helvetica", size: 10),
     color: .black)
-  public var axisLeading: CGFloat = 3
+  public var axisLeading: Double = 3
 
   public var curves: [CurveTheme] = []
   public var curveFallback: CurveTheme
     = CurveTheme(color: .black, width: 4)
 
   public var hairlines = Stroke(width: 0.5, color: .black)
-  public var bandDimmingFactor: CGFloat = 0.3
+  public var bandDimmingFactor: Double = 0.3
 
-  public var xPadding: CGFloat = 6
-  public var yPadding: CGFloat = 3
+  public var xPadding: Double = 6
+  public var yPadding: Double = 3
 
   public var legendPosition: LegendPosition = .topLeft
   public var legendLabels =
     Text.Style(font: Font(family: "Menlo", size: 12), color: .black)
-  public var legendCornerOffset = CGPoint(x: 24, y: 24)
+  public var legendCornerOffset = Point(x: 24, y: 24)
   public var legendPadding = EdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
-  public var legendLineSampleWidth: CGFloat = 24
-  public var legendLineLeading: CGFloat = 3
-  public var legendSeparation: CGFloat = 9
+  public var legendLineSampleWidth: Double = 24
+  public var legendLineLeading: Double = 3
+  public var legendSeparation: Double = 9
 
   public init() {}
 }
@@ -66,9 +66,9 @@ public struct Theme: Codable {
 extension Theme {
   public struct CurveTheme: Hashable, Codable {
     public var color: Color
-    public var lineWidth: CGFloat
+    public var lineWidth: Double
 
-    public init(color: Color, width: CGFloat) {
+    public init(color: Color, width: Double) {
       self.color = color
       self.lineWidth = width
     }
@@ -89,7 +89,7 @@ extension Theme {
     // When we have to draw too many curves, just spread them out equally
     // over the rainbow. The result typically won't be very useful.
     theme.color = Color(
-      hue: CGFloat(index) / CGFloat(count),
+      hue: Double(index) / Double(count),
       saturation: 1,
       brightness: 1,
       alpha: 1)
@@ -102,25 +102,29 @@ extension Theme {
       .withAlphaFactor(bandDimmingFactor)
   }
 
-  internal func _legendFrame(for size: CGSize, in bounds: CGRect) -> CGRect {
-    let origin: CGPoint
+  internal func _legendFrame(for size: Vector, in bounds: Rectangle) -> Rectangle {
+    let origin: Point
     switch legendPosition {
     case .hidden:
-      return CGRect.null
+      return Rectangle.null
     case .topLeft:
-      origin = CGPoint(x: bounds.minX + legendCornerOffset.x,
-                       y: bounds.minY + legendCornerOffset.y)
+      origin = Point(
+        x: bounds.minX + legendCornerOffset.x,
+        y: bounds.minY + legendCornerOffset.y)
     case .topRight:
-      origin = CGPoint(x: bounds.maxX - legendCornerOffset.x - size.width,
-                       y: bounds.minY + legendCornerOffset.y)
+      origin = Point(
+        x: bounds.maxX - legendCornerOffset.x - size.dx,
+        y: bounds.minY + legendCornerOffset.y)
     case .bottomLeft:
-      origin = CGPoint(x: bounds.minX + legendCornerOffset.x,
-                       y: bounds.maxY - legendCornerOffset.y - size.height)
+      origin = Point(
+        x: bounds.minX + legendCornerOffset.x,
+        y: bounds.maxY - legendCornerOffset.y - size.dy)
     case .bottomRight:
-      origin = CGPoint(x: bounds.maxX - legendCornerOffset.x - size.width,
-                       y: bounds.maxY - legendCornerOffset.y - size.height)
+      origin = Point(
+        x: bounds.maxX - legendCornerOffset.x - size.dx,
+        y: bounds.maxY - legendCornerOffset.y - size.dy)
     }
-    return CGRect(origin: origin, size: size)
+    return Rectangle(origin: origin, size: size)
   }
 }
 

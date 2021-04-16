@@ -9,15 +9,13 @@
 //
 //===----------------------------------------------------------------------===//
 
-import Foundation // For CGPoint, CGRect
-
 public enum Path {
   /// A line segment between two points.
-  case line(from: CGPoint, to: CGPoint)
+  case line(from: Point, to: Point)
   /// A rectangle.
-  case rect(CGRect)
+  case rect(Rectangle)
   /// A series of connected line segments.
-  case lines([CGPoint])
+  case lines([Point])
 }
 
 extension Path: Codable {
@@ -27,12 +25,12 @@ extension Path: Codable {
     switch kind {
     case "line":
       self = .line(
-        from: try container.decode(CGPoint.self),
-        to: try container.decode(CGPoint.self))
+        from: try container.decode(Point.self),
+        to: try container.decode(Point.self))
     case "rect":
-      self = .rect(try container.decode(CGRect.self))
+      self = .rect(try container.decode(Rectangle.self))
     case "lines":
-      self = .lines(try container.decode([CGPoint].self))
+      self = .lines(try container.decode([Point].self))
     default:
       throw DecodingError.dataCorruptedError(
         in: container,

@@ -43,7 +43,7 @@ extension Curve {
   }
 }
 
-extension Curve where Point == BenchmarkResults.Point {
+extension Curve where Point == Measurement {
   var sizeRange: ClosedRange<Size>? {
     guard !points.isEmpty else { return nil }
     let min = points.min(by: { $0.size < $1.size })
@@ -60,22 +60,10 @@ extension Curve where Point == BenchmarkResults.Point {
 }
 
 extension BenchmarkResults {
-  /// A point in the document coordinate system, i.e., a pair of size and
-  /// time values.
-  public struct Point: Hashable, Codable {
-    public let size: Size
-    public let time: Time
-    
-    public init(size: Size, time: Time) {
-      self.size = size
-      self.time = time
-    }
-  }
-  
-  public func curve(id: TaskID, statistic: Sample.Statistic) -> Curve<Point> {
-    let points: [Point] = self[id: id].compactMap { (size, sample) in
+  public func curve(id: TaskID, statistic: Sample.Statistic) -> Curve<Measurement> {
+    let points: [Measurement] = self[id: id].compactMap { (size, sample) in
       guard let time = sample[statistic] else { return nil }
-      return Point(size: size, time: time)
+      return Measurement(size: size, time: time)
     }
     return Curve(points)
   }

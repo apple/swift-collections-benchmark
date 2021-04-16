@@ -194,7 +194,7 @@ extension _BenchmarkCLI.Results {
           let data = try renderer.render(
             graphics,
             format: format.rawValue,
-            bitmapScale: CGFloat(chartOptions.scale))
+            bitmapScale: chartOptions.scale)
           let filename = self.filename(title: title, index: i, format: format)
           let url = dir.appendingPathComponent(filename)
           try data.write(to: url, options: .atomic)

@@ -11,13 +11,22 @@
 
 import Foundation
 
-public struct Font: Hashable, Codable, CustomStringConvertible {
-  public var family: String
-  public var size: Double
-  public var isBold = false
-  public var isItalic = false
+@inline(__always)
+internal func _sin(_ radians: Double) -> Double {
+  sin(radians)
+}
 
-  public var description: String {
-    "'\(family)' at size \(size)"
-  }
+@inline(__always)
+internal func _cos(_ radians: Double) -> Double {
+  cos(radians)
+}
+
+@inline(__always)
+internal func _log2(_ value: Double) -> Double {
+  log2(value)
+}
+
+@inline(__always)
+internal func _pow(_ base: Double, _ exponent: Double) -> Double {
+  pow(base, exponent)
 }
