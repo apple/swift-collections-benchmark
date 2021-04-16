@@ -58,7 +58,7 @@ benchmark.addSimple(
 benchmark.main()
 ```
 
-The benchmark definition above has a title, an input type specification, and a closure to execute it. In this case, our `kalimbaOrdered` benchmark uses an array of integers as its input (populated by randomly shuffling integers in the range `0..<size`, where `size` varies between executions). On every run, it reorders its input into kalimba order, and feeds the result to the special `blackHole` function. This function discards its input -- but it does it in a way that prevents the Swift compiler from realizing that the result isn't actually used. (Otherwise, the compiler may helpfully eliminate the entire calculation, defeating the whole purpose of running the benchmark!)
+The benchmark definition above has a title, an input type specification, and a closure to execute it. In this case, our `kalimbaOrdered` benchmark uses an array of integers as its input (populated by randomly shuffling integers in the range `0..<size`, where `size` varies between executions). On every run, it reorders its input into kalimba order, and feeds the result to the special `blackHole` function. This function does nothing, discarding its input -- but it does this in a way that prevents the Swift compiler from realizing that the result isn't actually used. (Otherwise, the compiler may helpfully eliminate the entire calculation, defeating the entire purpose of running the benchmark!)
 
 That's all we needed to write -- we now have a helpful benchmark utility that we can run from the command line. It uses the [Swift Argument Parser] to provide a friendly interface, with lots of interesting commands and a rich set of options, complete with `--help` for each.
 
@@ -100,7 +100,7 @@ $ open chart.png
 
 (If you are using Linux, you may need to replace `png` with `svg` -- you'll get the same charts, only in a different format!)
 
-Here is how the resulting graph looks with the results collected:
+Here is how the resulting graph looks with the results we've just collected:
 
 <img src="./Assets/kalimba-chart.png">
 
@@ -201,7 +201,7 @@ With so many benchmarks, we need a way to organize them into a series of themati
 
 ![chaos.png](Assets/chaos.png)
 
-Here is where benchmark libraries come in! They allow us to maintain a collection of interesting charts, organized into hierarchical sections, with nice descriptive titles. Once we have a library, we can re-run the specific benchmarks it contains, and render the result in a nice document.
+Here is where benchmark libraries come in! They allow us to maintain a collection of interesting charts, organized into hierarchical sections, with nice descriptive titles. Once we have defined a library, we can easily re-run the specific benchmarks it contains, and render the result in a nice document. We don't need to keep track of what combinations of tasks make the most useful charts, or to remember to run every task we're going to need -- the library takes care of administering these details.
 
 Benchmark libraries are JSON text files, containing serialized [`ChartLibrary`](https://github.com/apple/swift-collections-benchmark/blob/main/Sources/CollectionsBenchmark/Benchmark/Benchmark%2BChartLibrary.swift) instances. A production example is [the chart library that comes with the Collections package](https://github.com/apple/swift-collections/blob/main/Benchmarks/Benchmarks/Library.json).
 
