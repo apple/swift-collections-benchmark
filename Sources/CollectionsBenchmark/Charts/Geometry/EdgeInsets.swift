@@ -12,37 +12,37 @@
 import Foundation
 
 public struct EdgeInsets: Hashable, Codable {
-  public var top: CGFloat
-  public var left: CGFloat
-  public var bottom: CGFloat
-  public var right: CGFloat
-  
-  public init() {
-    top = 0
-    left = 0
-    bottom = 0
-    right = 0
-  }
-  
+  public var top: Double
+  public var left: Double
+  public var bottom: Double
+  public var right: Double
+
   public init(
-    top: CGFloat = 0,
-    left: CGFloat = 0,
-    bottom: CGFloat = 0,
-    right: CGFloat = 0
+    top: Double = 0,
+    left: Double = 0,
+    bottom: Double = 0,
+    right: Double = 0
   ) {
     self.top = top
     self.left = left
     self.bottom = bottom
     self.right = right
   }
-}
 
-extension CGRect {
-  public func inset(by insets: EdgeInsets) -> CGRect {
-    CGRect(
-      x: self.origin.x + insets.left,
-      y: self.origin.y + insets.top,
-      width: self.size.width - insets.left - insets.right,
-      height: self.size.height - insets.bottom - insets.top)
+  public init(
+    minX: Double = 0,
+    minY: Double = 0,
+    maxX: Double = 0,
+    maxY: Double = 0
+  ) {
+    self.init(top: minY, left: minX, bottom: maxY, right: maxX)
   }
+
+  public var minX: Double { left }
+  public var minY: Double { top }
+  public var maxX: Double { right }
+  public var maxY: Double { bottom }
+
+  public var dx: Double { minX + maxX }
+  public var dy: Double { minY + maxY }
 }

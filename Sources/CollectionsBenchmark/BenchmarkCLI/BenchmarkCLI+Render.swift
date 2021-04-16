@@ -56,13 +56,13 @@ extension _BenchmarkCLI {
                         in: results,
                         options: try options.chartOptions())
       let graphics = chart.draw(
-        bounds: CGRect(x: 0, y: 0, width: options.width, height: options.height),
+        bounds: Rectangle(x: 0, y: 0, width: options.width, height: options.height),
         theme: theme,
         renderer: renderer)
       let data = try renderer.render(
         graphics,
         format: output.pathExtension,
-        bitmapScale: CGFloat(options.scale))
+        bitmapScale: options.scale)
       try data.write(to: output, options: .atomic)
     }
   }

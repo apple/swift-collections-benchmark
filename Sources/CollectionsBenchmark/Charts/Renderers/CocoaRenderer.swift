@@ -49,27 +49,27 @@ extension NSBezierPath {
     switch path {
     case let .line(from: start, to: end):
       self.init()
-      move(to: start)
-      line(to: end)
+      move(to: CGPoint(start))
+      line(to: CGPoint(end))
     case let .rect(rect):
-      self.init(rect: rect)
+      self.init(rect: CGRect(rect))
     case let .lines(points):
       self.init()
       if points.isEmpty { return }
-      self.move(to: points[0])
+      self.move(to: CGPoint(points[0]))
       for point in points.dropFirst() {
-        self.line(to: point)
+        self.line(to: CGPoint(point))
       }
     }
   }
 }
 
 extension NSImage {
-  internal func _pngData(scale: CGFloat = 4) throws -> Data {
+  internal func _pngData(scale: Double = 4) throws -> Data {
     let cgimage = self.cgImage(
       forProposedRect: nil,
       context: nil,
-      hints: [.ctm: NSAffineTransform(transform: .init(scale: scale))])!
+      hints: [.ctm: NSAffineTransform(transform: .init(scale: CGFloat(scale)))])!
     let rep = NSBitmapImageRep(cgImage: cgimage)
     rep.size = self.size
     guard let data = rep.representation(using: .png, properties: [:]) else {
@@ -88,7 +88,7 @@ internal class _CocoaFontCache {
     let traits = font.fontDescriptor.symbolicTraits
     return Font(
       family: font.familyName ?? font.fontName,
-      size: font.pointSize,
+      size: Double(font.pointSize),
       isBold: traits.contains(.bold),
       isItalic: traits.contains(.italic))
   }
@@ -103,13 +103,13 @@ internal class _CocoaFontCache {
       let descriptor = NSFontDescriptor()
         .withFamily(font.family)
         .withSymbolicTraits(traits)
-      if let nsfont = NSFont(descriptor: descriptor, size: font.size) {
+      if let nsfont = NSFont(descriptor: descriptor, size: CGFloat(font.size)) {
         return nsfont
       }
       if _knownMissingFonts.insert(font).inserted {
         complain("warning: Missing font '\(font)' substituted with default")
       }
-      return NSFont.systemFont(ofSize: font.size)
+      return NSFont.systemFont(ofSize: CGFloat(font.size))
     }
   }
 }
@@ -122,16 +122,16 @@ public class CocoaRenderer: Renderer {
   public func measure(
     _ font: Font,
     _ text: String
-  ) -> (size: CGSize, descender: CGFloat) {
+  ) -> (width: Double, height: Double, descender: Double) {
     let font = _fontCache.nsFont(for: font)
     let size = (text as NSString).boundingRect(
       with: CGSize(width: 1000, height: 1000),
       options: [.usesFontLeading],
       attributes: [.font: font]).integral.size
-    return (size, -font.descender)
+    return (Double(size.width), Double(size.height), -Double(font.descender))
   }
 
-  public func renderPNG(for graphics: Graphics, scale: CGFloat) throws -> Data {
+  public func renderPNG(for graphics: Graphics, scale: Double) throws -> Data {
     try renderImage(for: graphics)._pngData(scale: scale)
   }
 
@@ -140,7 +140,7 @@ public class CocoaRenderer: Renderer {
       kCGPDFContextCreator: _projectName,
     ]
     let data = NSMutableData()
-    var bounds = graphics.bounds
+    var bounds = CGRect(graphics.bounds)
     let c = CGContext(
       consumer: CGDataConsumer(data: data as CFMutableData)!,
       mediaBox: &bounds,
@@ -163,8 +163,10 @@ public class CocoaRenderer: Renderer {
 
   public func renderImage(for graphics: Graphics) -> NSImage {
     let b = graphics.bounds
-    return NSImage(size: b.integral.size, flipped: true) { rect in
-      let t = AffineTransform(translationByX: -b.minX, byY: -b.minY)
+    return NSImage(size: CGSize(b.integral.size), flipped: true) { rect in
+      let t = AffineTransform(
+        translationByX: CGFloat(-b.minX),
+        byY: CGFloat(-b.minY))
       NSAffineTransform(transform: t).concat()
       self.draw(graphics)
       return true
@@ -196,12 +198,14 @@ public class CocoaRenderer: Renderer {
         path.fill()
       }
       if let stroke = shape.stroke {
-        path.lineWidth = stroke.width
+        path.lineWidth = CGFloat(stroke.width)
         path.lineCapStyle = .init(stroke.capStyle)
         path.lineJoinStyle = .init(stroke.joinStyle)
         if let dash = stroke.dash {
           path.setLineDash(
-            dash.style, count: dash.style.count, phase: dash.phase)
+            dash.style.map { CGFloat($0) },
+            count: dash.style.count,
+            phase: CGFloat(dash.phase))
         }
         stroke.color.nsColor.setStroke()
         path.stroke()
@@ -210,18 +214,18 @@ public class CocoaRenderer: Renderer {
       if let url = text.linkTarget {
         let c = NSGraphicsContext.current!.cgContext
         let tr = c.userSpaceToDeviceSpaceTransform
-        c.setURL(url as CFURL, for: text.boundingBox.applying(tr))
+        c.setURL(url as CFURL, for: CGRect(text.boundingBox).applying(tr))
       }
       var attributes: [NSAttributedString.Key: Any] = [:]
       attributes[.font] = _fontCache.nsFont(for: text.style.font)
       attributes[.foregroundColor] = text.style.color.nsColor
       //attributes[.link] = text.linkTarget
       let str = NSAttributedString(string: text.string, attributes: attributes)
-      str.draw(in: text.boundingBox)
+      str.draw(in: CGRect(text.boundingBox))
 
     case let .group(clippingRect: clippingRect, elements):
       NSGraphicsContext.saveGraphicsState()
-      clippingRect.clip()
+      CGRect(clippingRect).clip()
       draw(elements)
       NSGraphicsContext.restoreGraphicsState()
     }
@@ -236,7 +240,7 @@ public class CocoaRenderer: Renderer {
   public func render(
     _ graphics: Graphics,
     format: String,
-    bitmapScale: CGFloat
+    bitmapScale: Double
   ) throws -> Data {
     switch format.lowercased() {
     case "png":
@@ -244,7 +248,8 @@ public class CocoaRenderer: Renderer {
     case "pdf":
       return try renderPDF(for: graphics)
     default:
-      return try DefaultRenderer().render(graphics, format: format, bitmapScale: bitmapScale)
+      return try DefaultRenderer()
+        .render(graphics, format: format, bitmapScale: bitmapScale)
     }
   }
 
@@ -255,7 +260,8 @@ public class CocoaRenderer: Renderer {
   ) throws -> DocumentRenderer {
     switch format {
     default:
-      return try DefaultRenderer().documentRenderer(title: title, format: format, style: style)
+      return try DefaultRenderer()
+        .documentRenderer(title: title, format: format, style: style)
     }
   }
 }

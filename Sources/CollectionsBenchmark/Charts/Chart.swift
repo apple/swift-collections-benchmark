@@ -13,13 +13,13 @@ import Foundation
 
 /// The data for a benchmark chart in a nice preprocessed format.
 public struct Chart {
-  public typealias Point = BenchmarkResults.Point
+  public typealias Measurement = BenchmarkResults.Measurement
 
   public let options: Options
   public let sizeScale: ChartScale
   public let timeScale: ChartScale
   public let links: [TaskID: URL]
-  internal let _data: _SimpleOrderedDictionary<TaskID, Band<Curve<Point>>>
+  internal let _data: _SimpleOrderedDictionary<TaskID, Band<Curve<Measurement>>>
 
   init(
     taskIDs: [TaskID],
@@ -35,7 +35,7 @@ public struct Chart {
     // Gather data in the results coordinate system.
     self._data = .init(
       uniqueKeysWithValues: taskIDs.lazy.map { id in
-        var band = Band<Curve<Point>>(.init())
+        var band = Band<Curve<Measurement>>(.init())
         for bi in BandIndex.allCases {
           let statistic = options.statistics[bi]
           guard statistic != .none else { continue }
@@ -85,14 +85,14 @@ extension Chart {
     _data.map { $0.key }
   }
 
-  public func chartData(for taskID: TaskID) -> Band<Curve<Point>>? {
+  public func chartData(for taskID: TaskID) -> Band<Curve<Measurement>>? {
     _data[taskID]
   }
 }
 
 extension Chart {
   public func draw(
-    bounds: CGRect,
+    bounds: Rectangle,
     theme: Theme,
     renderer: Renderer
   ) -> Graphics {
@@ -108,21 +108,21 @@ extension Chart {
     if !caption.isEmpty {
       let metrics = renderer.measure(theme.axisLabels.font, caption)
       let division = rect.divided(
-        atDistance: metrics.size.height + theme.axisLeading,
-        from: .maxYEdge)
+        atDistance: metrics.height + theme.axisLeading,
+        from: .maxY)
       rect = division.remainder
       let captionRect =
         division.slice
-        .inset(by: EdgeInsets(left: axisMetrics.size.width))
-        .divided(atDistance: metrics.size.width, from: .minXEdge)
+        .inset(by: EdgeInsets(minX: axisMetrics.width))
+        .divided(atDistance: metrics.width, from: .minX)
         .slice
       g.addText(caption,
                 style: theme.axisLabels,
-                in: CGRect(
+                in: Rectangle(
                     x: captionRect.minX,
-                    y: captionRect.maxY - metrics.size.height,
-                    width: metrics.size.width,
-                    height: metrics.size.height),
+                    y: captionRect.maxY - metrics.height,
+                    width: metrics.width,
+                    height: metrics.height),
                 descender: metrics.descender)
 
       // Render hallmark.
@@ -131,26 +131,26 @@ extension Chart {
       g.addText(hallmark,
                 style: theme.axisLabels,
                 linkTarget: URL(string: _projectURL)!,
-                in: CGRect(
+                in: Rectangle(
                     x: max(captionRect.maxX + theme.xPadding,
-                           division.slice.maxX - axisMetrics.size.width - hmMetrics.size.width),
-                    y: captionRect.maxY - hmMetrics.size.height,
-                    width: hmMetrics.size.width,
-                    height: hmMetrics.size.height),
+                           division.slice.maxX - axisMetrics.width - hmMetrics.width),
+                    y: captionRect.maxY - hmMetrics.height,
+                    width: hmMetrics.width,
+                    height: hmMetrics.height),
                 descender: hmMetrics.descender)
     }
 
     // Allocate space for axis labels.
     rect = rect.inset(
       by: EdgeInsets(
-        left: axisMetrics.size.width,
-        bottom: axisMetrics.size.height + theme.axisLeading,
-        right: axisMetrics.size.width))
+        minX: axisMetrics.width,
+        maxX: axisMetrics.width,
+        maxY: axisMetrics.height + theme.axisLeading))
 
     let chartBounds = rect
-    var chartTransform = AffineTransform.identity
-    chartTransform.translate(x: rect.minX, y: rect.minY)
-    chartTransform.scale(x: rect.width, y: rect.height)
+    let chartTransform = Transform.identity
+      .translated(x: rect.minX, y: rect.minY)
+      .scaled(x: rect.width, y: rect.height)
 
     _renderGridlinesForSizeAxis(
       chartBounds: chartBounds,
@@ -177,10 +177,11 @@ extension Chart {
     // Convert curve data into chart coordinates.
     let bands = _data.map { item in
       item.value.map { curve in
-        curve.map { point -> CGPoint in
-          let p = CGPoint(x: sizeScale.position(for: Double(point.size.rawValue)),
-                          y: 1 - timeScale.position(for: point.time.seconds))
-          return chartTransform.transform(p)
+        curve.map { point -> Point in
+          Point(
+            x: sizeScale.position(for: Double(point.size.rawValue)),
+            y: 1 - timeScale.position(for: point.time.seconds))
+          .applying(chartTransform)
         }
       }
     }
@@ -224,7 +225,7 @@ extension Chart {
 
 extension Chart {
   internal func _renderGridlinesForSizeAxis(
-    chartBounds: CGRect,
+    chartBounds: Rectangle,
     in g: inout Graphics,
     theme: Theme,
     renderer: Renderer
@@ -233,15 +234,17 @@ extension Chart {
     var lines: [Line] = sizeScale.gridlines.map { gridline in
       let xMid = chartBounds.minX + gridline.position * chartBounds.width
       let yTop = chartBounds.maxY + 3
-      let start = CGPoint(x: xMid, y: chartBounds.minY)
-      let end = CGPoint(x: xMid, y: chartBounds.maxY)
+      let start = Point(x: xMid, y: chartBounds.minY)
+      let end = Point(x: xMid, y: chartBounds.maxY)
       let line = Shape(
         path: .line(from: start, to: end),
         stroke: gridline.kind == .major ? theme.majorGridline : theme.minorGridline)
       let label: Text? = gridline.label.map { label in
         let metrics = renderer.measure(theme.axisLabels.font, label)
-        let pos = CGPoint(x: xMid - metrics.size.width / 2, y: yTop)
-        let box = CGRect(origin: pos, size: metrics.size)
+        let pos = Point(x: xMid - metrics.width / 2, y: yTop)
+        let box = Rectangle(
+          x: pos.x, y: pos.y,
+          width: metrics.width, height: metrics.height)
         return Text(label, style: theme.axisLabels,
                     in: box, descender: metrics.descender)
       }
@@ -249,10 +252,10 @@ extension Chart {
     }
     // Returns true if there isn't enough space to display all labels.
     func needsThinning(_ lines: [Line]) -> Bool {
-      var previousFrame: CGRect = .null
+      var previousFrame: Rectangle = .null
       for line in lines {
         guard let label = line.label else { continue }
-        let enlarged = label.boundingBox.insetBy(dx: -3, dy: 0)
+        let enlarged = label.boundingBox.inset(dx: -3, dy: 0)
         if previousFrame.intersects(enlarged) { return true }
         previousFrame = enlarged
       }
@@ -280,33 +283,33 @@ extension Chart {
 
 extension Chart {
   internal func _renderGridlinesForTimeAxis(
-    chartBounds: CGRect,
+    chartBounds: Rectangle,
     in g: inout Graphics,
     theme: Theme,
     renderer: Renderer
   ) {
     let suppressMinorLines = (!options.amortizedTime || chartBounds.height < 200)
-    var previousLabelBox = CGRect.null
+    var previousLabelBox = Rectangle.null
     for gridline in timeScale.gridlines {
       guard gridline.kind == .major || !suppressMinorLines else { continue }
       let y = chartBounds.maxY - gridline.position * chartBounds.height
       g.addLine(
-        from: CGPoint(x: chartBounds.minX, y: y),
-        to: CGPoint(x: chartBounds.maxX, y: y),
+        from: Point(x: chartBounds.minX, y: y),
+        to: Point(x: chartBounds.maxX, y: y),
         stroke: gridline.kind == .major ? theme.majorGridline : theme.minorGridline)
       if gridline.kind == .major, let label = gridline.label {
         let metrics = renderer.measure(theme.axisLabels.font, label)
-        let yMid = y - metrics.size.height / 6
-        let left = CGRect(
-          x: chartBounds.minX - theme.xPadding - metrics.size.width,
-          y: yMid - metrics.size.height / 2,
-          width: metrics.size.width,
-          height: metrics.size.height)
-        let right = CGRect(
+        let yMid = y - metrics.height / 6
+        let left = Rectangle(
+          x: chartBounds.minX - theme.xPadding - metrics.width,
+          y: yMid - metrics.height / 2,
+          width: metrics.width,
+          height: metrics.height)
+        let right = Rectangle(
           x: chartBounds.maxX + theme.xPadding,
-          y: yMid - metrics.size.height / 2,
-          width: metrics.size.width,
-          height: metrics.size.height)
+          y: yMid - metrics.height / 2,
+          width: metrics.width,
+          height: metrics.height)
         if left.intersects(previousLabelBox) { continue }
         previousLabelBox = left
         g.addText(label, style: theme.axisLabels,
@@ -320,12 +323,12 @@ extension Chart {
 
 extension Chart {
   struct _LegendItem {
-    var start: CGPoint
-    var end: CGPoint
+    var start: Point
+    var end: Point
     var strokes: [Stroke]
     var label: Text
 
-    mutating func _offset(by delta: CGPoint) {
+    mutating func _offset(by delta: Point) {
       start.x += delta.x
       start.y += delta.y
       end.x += delta.x
@@ -336,64 +339,64 @@ extension Chart {
   }
 
   internal func _layoutLegend(
-    chartBounds: CGRect,
+    chartBounds: Rectangle,
     options: Options,
     theme: Theme,
     renderer: Renderer
-  ) -> (box: CGRect, items: [_LegendItem])? {
+  ) -> (box: Rectangle, items: [_LegendItem])? {
     guard theme.legendPosition != .hidden else { return nil }
-    typealias Metrics = (size: CGSize, descender: CGFloat)
+    typealias Metrics = (width: Double, height: Double, descender: Double)
     let labels: [(taskID: TaskID, string: String, metrics: Metrics)] =
       _data.map { item in
         let label = item.key.typesetDescription
         let metrics = renderer.measure(theme.legendLabels.font, label)
         return (item.key, label, metrics)
       }
-    let maxHeight: CGFloat = labels.reduce(0) {
-      Swift.max($0, $1.metrics.size.height)
+    let maxHeight: Double = labels.reduce(0) {
+      Swift.max($0, $1.metrics.height)
     }
-    let maxWidth: CGFloat = labels.reduce(0) {
-      Swift.max($0, $1.metrics.size.width)
+    let maxWidth: Double = labels.reduce(0) {
+      Swift.max($0, $1.metrics.width)
     }
 
-    var y = theme.legendPadding.top
+    var y = theme.legendPadding.minY
     var items: [_LegendItem] = labels.enumerated().map { (index, label) in
       let metrics = label.metrics
 
       if index > 0 {
         y += theme.legendLineLeading
       }
-      var x = theme.legendPadding.left
-      let sampleRect = CGRect(
+      var x = theme.legendPadding.minX
+      let sampleRect = Rectangle(
         x: x,
-        y: y + maxHeight - metrics.size.height,
+        y: y + maxHeight - metrics.height,
         width: theme.legendLineSampleWidth,
-        height: metrics.size.height)
+        height: metrics.height)
 
       x += sampleRect.width + theme.legendSeparation
       let text = Text(
         label.string,
         style: theme.legendLabels,
         linkTarget: self.links[label.taskID],
-        in: CGRect(origin: CGPoint(x: x, y: y), size: metrics.size),
+        in: Rectangle(x: x, y: y, width: metrics.width, height: metrics.height),
         descender: metrics.descender)
       
       let curveTheme = theme._themeForCurve(index: index, of: labels.count)
-      let lineRect = sampleRect.insetBy(dx: curveTheme.lineWidth / 2, dy: 0)
+      let lineRect = sampleRect.inset(dx: curveTheme.lineWidth / 2, dy: 0)
       let item = _LegendItem(
-        start: CGPoint(x: lineRect.minX, y: lineRect.midY),
-        end: CGPoint(x: lineRect.maxX, y: lineRect.midY),
+        start: Point(x: lineRect.minX, y: lineRect.midY),
+        end: Point(x: lineRect.maxX, y: lineRect.midY),
         strokes: [curveTheme.stroke, theme.hairlines],
         label: text)
       y += maxHeight
       return item
     }
-    y += theme.legendPadding.bottom
+    y += theme.legendPadding.maxY
 
-    let size = CGSize(
-      width: theme.legendPadding.left + theme.legendLineSampleWidth
-        + theme.legendSeparation + maxWidth + theme.legendPadding.right,
-      height: y)
+    let size = Vector(
+      dx: theme.legendPadding.minY + theme.legendLineSampleWidth
+        + theme.legendSeparation + maxWidth + theme.legendPadding.maxY,
+      dy: y)
     let box = theme._legendFrame(for: size, in: chartBounds)
     for i in items.indices {
       items[i]._offset(by: box.origin)

@@ -9,7 +9,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-import Foundation // CGRect, URL
+import Foundation // URL
 
 public struct Text: Codable {
   public struct Style: Hashable, Codable {
@@ -19,16 +19,16 @@ public struct Text: Codable {
 
   public var string: String
   public var style: Style
-  public var boundingBox: CGRect
-  public var descender: CGFloat
+  public var boundingBox: Rectangle
+  public var descender: Double
   public var linkTarget: URL?
 
   public init(
     _ string: String,
     style: Style,
     linkTarget: URL? = nil,
-    in boundingBox: CGRect,
-    descender: CGFloat
+    in boundingBox: Rectangle,
+    descender: Double
   ) {
     self.string = string
     self.style = style

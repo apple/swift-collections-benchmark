@@ -27,16 +27,16 @@ extension UIBezierPath {
     switch path {
     case let .line(from: start, to: end):
       self.init()
-      move(to: start)
-      addLine(to: end)
+      move(to: CGPoint(start))
+      addLine(to: CGPoint(end))
     case let .rect(rect):
-      self.init(rect: rect)
+      self.init(rect: CGRect(rect))
     case let .lines(points):
       self.init()
       if points.isEmpty { return }
-      self.move(to: points[0])
+      self.move(to: CGPoint(points[0]))
       for point in points.dropFirst() {
-        self.addLine(to: point)
+        self.addLine(to: CGPoint(point))
       }
     }
   }
@@ -57,7 +57,7 @@ internal class _UIKitFontCache {
       let descriptor = UIFontDescriptor()
         .withFamily(font.family)
         .withSymbolicTraits(traits)!
-      return UIFont(descriptor: descriptor, size: font.size)
+      return UIFont(descriptor: descriptor, size: CGFloat(font.size))
     }
   }
 
@@ -65,7 +65,7 @@ internal class _UIKitFontCache {
     let traits = font.fontDescriptor.symbolicTraits
     return Font(
       family: font.familyName,
-      size: font.pointSize,
+      size: Double(font.pointSize),
       isBold: traits.contains(.traitBold),
       isItalic: traits.contains(.traitItalic))
   }
@@ -79,7 +79,7 @@ public struct UIKitRenderer: Renderer {
   public func measure(
     _ font: Font,
     _ text: String
-  ) -> (size: CGSize, descender: CGFloat) {
+  ) -> (width: Double, height: Double, descender: Double) {
     let font = _fontCache.uiFont(for: font)
     let size = (text as NSString).boundingRect(
       with: CGSize(width: 1000, height: 1000),
@@ -87,12 +87,12 @@ public struct UIKitRenderer: Renderer {
       attributes: [.font: font],
       context: nil
     ).integral.size
-    return (size, -font.descender)
+    return (Double(size.width), Double(size.height), -Double(font.descender))
   }
 
   #if !os(watchOS)
   @available(iOS 10, tvOS 10, *)
-  public func renderPNG(for graphics: Graphics, scale: CGFloat) throws -> Data {
+  public func renderPNG(for graphics: Graphics, scale: Double) throws -> Data {
     guard let data = renderBitmap(for: graphics, scale: scale).pngData() else {
       throw Benchmark.Error("Error generating PNG data")
     }
@@ -101,16 +101,16 @@ public struct UIKitRenderer: Renderer {
 
   @available(iOS 10, tvOS 10, *)
   public func renderPDF(for graphics: Graphics) throws -> Data {
-    let renderer = UIGraphicsPDFRenderer(bounds: graphics.bounds)
+    let renderer = UIGraphicsPDFRenderer(bounds: CGRect(graphics.bounds))
     return renderer.pdfData { context in
-      context.beginPage(withBounds: graphics.bounds,
+      context.beginPage(withBounds: CGRect(graphics.bounds),
                         pageInfo: [kCGPDFContextCreator as String: _projectName])
       draw(graphics.elements)
     }
   }
 
   @available(iOS 10, tvOS 10, *)
-  public func renderBitmap(for graphics: Graphics, scale: CGFloat) -> UIImage {
+  public func renderBitmap(for graphics: Graphics, scale: Double) -> UIImage {
     let srgbTraits = UITraitCollection(displayGamut: .SRGB)
     let format: UIGraphicsImageRendererFormat
     if #available(iOS 11, tvOS 11, *) {
@@ -122,9 +122,9 @@ public struct UIKitRenderer: Renderer {
     if #available(iOS 12, tvOS 12, *) {
       format.preferredRange = .standard
     }
-    format.scale = scale
+    format.scale = CGFloat(scale)
     let renderer = UIGraphicsImageRenderer(
-      bounds: graphics.bounds,
+      bounds: CGRect(graphics.bounds),
       format: format)
     return renderer.image { _ in
       draw(graphics.elements)
@@ -158,12 +158,14 @@ public struct UIKitRenderer: Renderer {
       }
 
       if let stroke = shape.stroke {
-        path.lineWidth = stroke.width
+        path.lineWidth = CGFloat(stroke.width)
         path.lineCapStyle = .init(stroke.capStyle)
         path.lineJoinStyle = .init(stroke.joinStyle)
         if let dash = stroke.dash {
           path.setLineDash(
-            dash.style, count: dash.style.count, phase: dash.phase)
+            dash.style.map { CGFloat($0) },
+            count: dash.style.count,
+            phase: CGFloat(dash.phase))
         }
         stroke.color.uiColor.setStroke()
         path.stroke()
@@ -172,17 +174,19 @@ public struct UIKitRenderer: Renderer {
       if let url = text.linkTarget {
         let c = UIGraphicsGetCurrentContext()!
         let tr = c.userSpaceToDeviceSpaceTransform
-        UIGraphicsSetPDFContextURLForRect(url, text.boundingBox.applying(tr))
+        UIGraphicsSetPDFContextURLForRect(
+          url,
+          CGRect(text.boundingBox).applying(tr))
       }
       var attributes: [NSAttributedString.Key: Any] = [:]
       attributes[.font] = _fontCache.uiFont(for: text.style.font)
       attributes[.foregroundColor] = text.style.color.uiColor
       let str = NSAttributedString(string: text.string, attributes: attributes)
-      str.draw(in: text.boundingBox)
+      str.draw(in: CGRect(text.boundingBox))
     case let .group(clippingRect: clippingRect, elements):
       let c = UIGraphicsGetCurrentContext()!
       c.saveGState()
-      c.clip(to: clippingRect)
+      c.clip(to: CGRect(clippingRect))
       draw(elements)
       c.restoreGState()
     }
@@ -203,7 +207,7 @@ public struct UIKitRenderer: Renderer {
   public func render(
     _ graphics: Graphics,
     format: String,
-    bitmapScale: CGFloat
+    bitmapScale: Double
   ) throws -> Data {
     let format = format.lowercased()
     #if !os(watchOS)

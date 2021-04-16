@@ -24,7 +24,7 @@ public protocol Renderer {
   func measure(
     _ font: Font,
     _ text: String
-  ) -> (size: CGSize, descender: CGFloat)
+  ) -> (width: Double, height: Double, descender: Double)
 
   var supportedImageFormats: [ImageFormat] { get }
   var defaultImageFormat: ImageFormat { get }
@@ -32,7 +32,7 @@ public protocol Renderer {
   func render(
     _ graphics: Graphics,
     format: String,
-    bitmapScale: CGFloat
+    bitmapScale: Double
   ) throws -> Data
 
   func documentRenderer(

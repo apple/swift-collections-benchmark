@@ -9,8 +9,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-import Foundation // CGFloat
-
 /// A color in sRGB color space, with an alpha channel and 8-bit components.
 public struct Color: Hashable {
   public var red: UInt8
@@ -25,21 +23,21 @@ public struct Color: Hashable {
     self.alpha = alpha
   }
 
-  public typealias CGFloatComponents =
-    (red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat)
+  public typealias RGBComponents =
+    (red: Double, green: Double, blue: Double, alpha: Double)
 
-  public init(srgbComponents srgb: CGFloatComponents) {
+  public init(srgbComponents srgb: RGBComponents) {
     self.red = UInt8((255 * min(max(srgb.red, 0), 1)).rounded())
     self.green = UInt8((255 * min(max(srgb.green, 0), 1)).rounded())
     self.blue = UInt8((255 * min(max(srgb.blue, 0), 1)).rounded())
     self.alpha = UInt8((255 * min(max(srgb.alpha, 0), 1)).rounded())
   }
 
-  public var srgbComponents: CGFloatComponents {
-    (CGFloat(red) / 255,
-     CGFloat(green) / 255,
-     CGFloat(blue) / 255,
-     CGFloat(alpha) / 255)
+  public var srgbComponents: RGBComponents {
+    (Double(red) / 255,
+     Double(green) / 255,
+     Double(blue) / 255,
+     Double(alpha) / 255)
   }
 }
 
@@ -50,7 +48,7 @@ extension Color {
 }
 
 extension Color {
-  public func withAlphaFactor(_ value: CGFloat) -> Color {
+  public func withAlphaFactor(_ value: Double) -> Color {
     var comps = srgbComponents
     comps.alpha *= value
     return Self(srgbComponents: comps)
@@ -59,10 +57,10 @@ extension Color {
 
 extension Color {
   public init(
-    hue: CGFloat,
-    saturation: CGFloat,
-    brightness: CGFloat,
-    alpha: CGFloat
+    hue: Double,
+    saturation: Double,
+    brightness: Double,
+    alpha: Double
   ) {
     let hue = hue - hue.rounded(.down)
     let segment = (6 * hue).rounded(.down)
@@ -70,7 +68,7 @@ extension Color {
     let p = brightness * (1 - saturation)
     let q = brightness * (1 - saturation * fraction)
     let t = brightness * (1 - saturation * (1 - fraction))
-    let srgb: CGFloatComponents
+    let srgb: RGBComponents
     switch Int(segment) % 6 {
     case 0: srgb = (red: brightness, green: t, blue: p, alpha: alpha)
     case 1: srgb = (red: q, green: brightness, blue: p, alpha: alpha)

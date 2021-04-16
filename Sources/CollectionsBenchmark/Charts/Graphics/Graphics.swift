@@ -9,14 +9,14 @@
 //
 //===----------------------------------------------------------------------===//
 
-import Foundation // For CGPoint, CGRect
+import Foundation // For URL
 
 /// Just enough graphics to render basic 2D charts.
 public struct Graphics: Codable {
-  public var bounds: CGRect
+  public var bounds: Rectangle
   public var elements: [Element] = []
 
-  public init(bounds: CGRect, elements: [Element] = []) {
+  public init(bounds: Rectangle, elements: [Element] = []) {
     self.bounds = bounds
     self.elements = elements
   }
@@ -31,8 +31,8 @@ extension Graphics {
   }
 
   public mutating func addLine(
-    from start: CGPoint,
-    to end: CGPoint,
+    from start: Point,
+    to end: Point,
     stroke: Stroke? = nil
   ) {
     let path: Path = .line(from: start, to: end)
@@ -40,7 +40,7 @@ extension Graphics {
   }
 
   public mutating func addRect(
-    _ rect: CGRect,
+    _ rect: Rectangle,
     fill: Color? = nil,
     stroke: Stroke? = nil
   ) {
@@ -49,7 +49,7 @@ extension Graphics {
   }
 
   public mutating func addLines(
-    _ points: [CGPoint],
+    _ points: [Point],
     fill: Color? = nil,
     stroke: Stroke? = nil
   ) {
@@ -61,8 +61,8 @@ extension Graphics {
     _ string: String,
     style: Text.Style,
     linkTarget: URL? = nil,
-    in boundingBox: CGRect,
-    descender: CGFloat
+    in boundingBox: Rectangle,
+    descender: Double
   ) {
     let text = Text(
       string,
@@ -74,7 +74,7 @@ extension Graphics {
   }
 
   public mutating func addGroup(
-    clippingRect: CGRect,
+    clippingRect: Rectangle,
     contents: (inout Graphics) -> Void
   ) {
     var group = Graphics(bounds: clippingRect)

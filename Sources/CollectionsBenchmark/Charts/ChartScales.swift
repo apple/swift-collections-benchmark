@@ -9,8 +9,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-import Foundation // CGPoint, CGFloat
-
 extension Chart {
   public struct Gridline {
     public enum Kind {
@@ -18,10 +16,10 @@ extension Chart {
       case minor
     }
     public let kind: Kind
-    public let position: CGFloat
+    public let position: Double
     public let label: String?
 
-    public init(_ kind: Kind, position: CGFloat, label: String? = nil) {
+    public init(_ kind: Kind, position: Double, label: String? = nil) {
       self.kind = kind
       self.position = position
       self.label = label
@@ -31,7 +29,7 @@ extension Chart {
 
 public protocol ChartScale {
   // Convert the given value to chart coordinates using this scale.
-  func position(for value: Double) -> CGFloat
+  func position(for value: Double) -> Double
   
   /// The range of values that can be displayed using this scale.
   var displayedRange: ClosedRange<Double> { get }
@@ -45,7 +43,7 @@ extension Chart {
   public struct EmptyScale: ChartScale {
     public let displayedRange: ClosedRange<Double> = 0...1
     public let gridlines: [Gridline] = []
-    public func position(for value: Double) -> CGFloat { CGFloat(2) }
+    public func position(for value: Double) -> Double { 2 }
   }
 
   public struct LogarithmicScale: ChartScale {
@@ -108,20 +106,20 @@ extension Chart {
       self.displayedRange = min ... max
       self._exponentRange = minExponent ... maxExponent
 
-      self._a = log2(min)
-      self._b = log2(max) - log2(min)
+      self._a = _log2(min)
+      self._b = _log2(max) - _log2(min)
     }
 
-    public func position(for value: Double) -> CGFloat {
+    public func position(for value: Double) -> Double {
       if value <= 0 { return 0 }
-      return CGFloat((log2(value) - _a) / _b)
+      return (_log2(value) - _a) / _b
     }
 
     public var gridlines: [Gridline] {
       var gridlines: [Gridline] = []
       let step = _isDecimal ? 10.0 : 2.0
       for exponent in _exponentRange {
-        let position = self.position(for: pow(step, Double(exponent)))
+        let position = self.position(for: _pow(step, Double(exponent)))
         let label = _labeler(exponent)
         let line = Gridline(.major, position: position, label: label)
         gridlines.append(line)
@@ -172,15 +170,15 @@ extension Chart {
           stepSize *= steps.next()
         }
       }
-      let min = stepSize * floor(range.lowerBound / stepSize)
-      let max = stepSize * ceil(range.upperBound / stepSize)
+      let min = stepSize * (range.lowerBound / stepSize).rounded(.down)
+      let max = stepSize * (range.upperBound / stepSize).rounded(.up)
       self.displayedRange = min ... max
       self._stepSize = stepSize
     }
 
-    public func position(for value: Double) -> CGFloat {
+    public func position(for value: Double) -> Double {
       let denom = displayedRange.upperBound - displayedRange.lowerBound
-      return CGFloat((value - displayedRange.lowerBound) / denom)
+      return (value - displayedRange.lowerBound) / denom
     }
 
     public var gridlines: [Gridline] {

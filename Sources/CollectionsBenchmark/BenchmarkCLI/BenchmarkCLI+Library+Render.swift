@@ -115,7 +115,7 @@ extension _BenchmarkCLI.Library {
             let data = try renderer.render(
               graphics,
               format: format.rawValue,
-              bitmapScale: CGFloat(options.scale))
+              bitmapScale: options.scale)
             try data.write(to: url)
             count += 1
           }

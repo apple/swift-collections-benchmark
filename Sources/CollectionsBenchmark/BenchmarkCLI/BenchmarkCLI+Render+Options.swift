@@ -9,7 +9,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-import Foundation // CGRect
 import ArgumentParser
 
 extension _BenchmarkCLI.Render {
@@ -85,8 +84,8 @@ extension _BenchmarkCLI.Render {
       return options
     }
 
-    var _bounds: CGRect {
-      CGRect(x: 0, y: 0, width: width, height: height)
+    var _bounds: Rectangle {
+      Rectangle(x: 0, y: 0, width: width, height: height)
     }
   }
 }
