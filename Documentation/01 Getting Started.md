@@ -31,13 +31,6 @@ This is where this package comes in -- it lets us easily create, run, and analyz
 ### Defining Benchmarks
 
 The `CollectionsBenchmark` library makes it easy to add an executable target for running, collecting, visualizing, and comparing benchmarks from the command line.
-To create a benchmark CLI tool, create a main.swift file and within it:
-
-1. Import `CollectionsBenchmark`.
-2. Create a `Benchmark` instance with an appropriate title.
-3. Add a benchmark to this instance using the `addSimple` method to configure the benchmark with a closure to execute.
-4. Invoke `benchmark.main()` to use the library's CLI features.
-
 The following example illustrates creating a benchamrk, included as [`main.swift`](./Example/Sources/kalimba-benchmark/main.swift) in the [`Documentation/Example` directory](./Example) of this project:
 
 ```swift
