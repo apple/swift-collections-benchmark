@@ -90,7 +90,7 @@ extension Band {
   }
 }
 
-extension Band where Element == Curve<BenchmarkResults.Measurement> {
+extension Band where Element == Curve<Measurement> {
   var sizeRange: ClosedRange<Size>? {
     _union(bottom.sizeRange, _union(center.sizeRange, top.sizeRange))
   }

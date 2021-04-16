@@ -167,14 +167,14 @@ extension TaskResults {
     for statistic: Sample.Statistic,
     percentile: Double,
     amortizedTime: Bool
-  ) -> Curve<BenchmarkResults.Measurement> {
-    var curve = Curve<BenchmarkResults.Measurement>()
+  ) -> Curve<Measurement> {
+    var curve = Curve<Measurement>()
     for (size, sample) in _samples {
       let sample = sample.discardingPercentile(above: percentile)
       guard let time = sample[statistic] ?? sample[.mean] else { continue }
 
       let t = amortizedTime ? time.amortized(over: size) : time
-      curve.points.append(BenchmarkResults.Measurement(size: size, time: t))
+      curve.points.append(Measurement(size: size, time: t))
     }
     return curve
   }

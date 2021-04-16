@@ -13,8 +13,6 @@ import Foundation
 
 /// The data for a benchmark chart in a nice preprocessed format.
 public struct Chart {
-  public typealias Measurement = BenchmarkResults.Measurement
-
   public let options: Options
   public let sizeScale: ChartScale
   public let timeScale: ChartScale
