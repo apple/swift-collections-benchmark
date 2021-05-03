@@ -1,0 +1,11 @@
+name: Windows
+
+on: [push, pull_request]
+
+jobs:
+  Windows:
+    name: Windows
+    runs-on: windows-2019
+    steps:
+    - name: Check out
+      uses: actions/checkout@v1
