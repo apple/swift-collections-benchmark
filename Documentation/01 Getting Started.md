@@ -248,11 +248,11 @@ With these arguments, the result is an interactive Markdown file that links to s
 >   <ul>
 >   <details>
 >     <summary>01: Deque: random access lookups</summary>
->     <img src="./Assets/sample-results/01%20Deque_%20random%20access%20lookups.png">
+>     <img src="./Assets/sample-results/01%20Deque%20-%20random%20access%20lookups.png">
 >   </details>
 >   <details>
 >     <summary>02: Deque: prepending individual integers</summary>
->     <img src="./Assets/sample-results/02%20Deque_%20prepending%20individual%20integers.png">
+>     <img src="./Assets/sample-results/02%20Deque%20-%20prepending%20individual%20integers.png">
 >   </details>
 >   <details>
 >     <summary>03: OrderedSet lookups</summary>
