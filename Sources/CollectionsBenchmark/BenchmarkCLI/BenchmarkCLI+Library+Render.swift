@@ -108,8 +108,7 @@ extension _BenchmarkCLI.Library {
               withIntermediateDirectories: true)
 
             let filename = "\(number) \(chart.title).\(format)"
-              .replacingOccurrences(of: "/", with: "-")
-            url.appendPathComponent(filename)
+            url.appendPathComponent(filename._sanitizedPathComponent())
             print("  \(url.relativePath)")
 
             let data = try renderer.render(
