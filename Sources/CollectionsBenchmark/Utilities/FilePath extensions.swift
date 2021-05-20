@@ -84,3 +84,46 @@ extension FilePath {
     return string.split(whereSeparator: { $0.isNewline }).map { String($0) }
   }
 }
+
+extension String {
+  /// Sanitize a string replacing common characters that aren't supported
+  /// in filesystem path components on the current system.
+  ///
+  /// Note that this does not guarantee that the returned string will be a
+  /// valid filename -- for example, it does not filter out control characters
+  /// other than NUL, and it does not check for reserved filenames such as
+  /// `.`, `..` (or `CON` on Windows). This is fine -- all this needs to do
+  /// is to map reasonable chart titles to plausible filenames that resemble
+  /// them. There is also no expectation that this would prevent collisions
+  /// -- the caller is supposed to guarantee that the filenames will get
+  /// distinguished by e.g. numbering them.
+  ///
+  /// (An example for a reasonable chart title that includes several characters
+  /// not supported in filenames is `std::deque<int> append/removeFirst`.
+  /// `:`, `<`, and `>` are invalid on Windows, while `/` is invalid on all
+  /// currently supported platforms.)
+  internal func _sanitizedPathComponent() -> String {
+    // FIXME: Should we use a highest common denominator allow list instead?
+    // (I don't think we need to go that far, but it may be nice to use the same
+    // rules everywhere.)
+    #if os(Windows)
+    let blockList: Set<UnicodeScalar> = [
+      "/", "\u{0}", "\\", ":", "<", ">", "\"", "|", "?", "*",
+    ]
+    #else
+    let blockList: Set<UnicodeScalar> = [
+      "/", "\u{0}",
+    ]
+    #endif
+    // Replace runs of bad characters with a single underscore.
+    var lastReplaced = false
+    let scalars = self.unicodeScalars.compactMap { c -> UnicodeScalar? in
+      let bad = blockList.contains(c)
+      defer { lastReplaced = bad }
+      return bad
+        ? (lastReplaced ? nil : "_")
+        : c
+    }
+    return String(String.UnicodeScalarView(scalars))
+  }
+}
