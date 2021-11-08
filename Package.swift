@@ -37,8 +37,8 @@ let package = Package(
     .library(name: "CollectionsBenchmark", targets: ["CollectionsBenchmark"]),
   ],
   dependencies: [
-    .package(url: "https://github.com/apple/swift-argument-parser", from: "0.3.0"),
-    .package(url: "https://github.com/apple/swift-system", from: "0.0.1"),
+    .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.1"),
+    .package(url: "https://github.com/apple/swift-system", from: "0.0.3"),
   ],
   targets: [
     .target(
