@@ -1,4 +1,4 @@
-# Swift Collections Benchmark
+# Swift Collections Benchmark 
 
 This package lets you collect and easily visualize performance data about data structure implementations and collection algorithms. It was created to help develop the [Swift Collections] package, but it's useful for so much more!
 
