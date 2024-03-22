@@ -15,6 +15,7 @@
 /// get used, and this could potentially interfere with the accuracy of a
 /// benchmark. To defeat these optimizations, pass such unused results to
 /// this function so that the compiler considers them used.
+@inline(never)
 @_optimize(none)
 public func blackHole<T>(_ value: T) {
 }
