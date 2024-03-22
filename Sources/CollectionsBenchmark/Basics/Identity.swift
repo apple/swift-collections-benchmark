@@ -18,6 +18,7 @@
 /// function; the compiler won't be able to tell that the function doesn't
 /// actually do anything, so the optimizations won't trigger.
 @inline(never)
+@_optimize(none)
 public func identity<T>(_ value: T) -> T {
   value
 }
