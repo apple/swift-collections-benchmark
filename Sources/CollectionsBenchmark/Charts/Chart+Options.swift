@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Collections open source project
 //
-// Copyright (c) 2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2021 - 2025 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -72,12 +72,12 @@ extension Chart.Options {
     let range = min.seconds ... max.seconds
     if self.logarithmicTime {
       let labeler: (Int) -> String = { value in
-        Time(pow(10, Double(value))).typesetDescription
+        Time.seconds(pow(10, Double(value))).typesetDescription
       }
       return Chart.LogarithmicScale(
         displayedRange: range, isDecimal: true, labeler: labeler)
     }
-    let labeler: (Double) -> String = { value in "\(Time(value))" }
+    let labeler: (Double) -> String = { value in "\(Time.seconds(value))" }
     return Chart.LinearScale(
       displayedRange: range, isDecimal: true, labeler: labeler)
   }

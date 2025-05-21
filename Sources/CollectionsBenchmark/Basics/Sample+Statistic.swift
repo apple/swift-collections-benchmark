@@ -25,7 +25,7 @@ extension Sample {
     case .maximum: return maximum
     case .sigma(let n):
       guard let sigma = standardDeviation else { return nil }
-      return Time(mean!.seconds + Double(n) * sigma.seconds)
+      return .seconds(mean!.seconds + Double(n) * sigma.seconds)
     case .mean: return mean
     case .minimum: return minimum
     case .none: return nil

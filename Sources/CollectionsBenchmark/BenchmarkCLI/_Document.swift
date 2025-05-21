@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Collections open source project
 //
-// Copyright (c) 2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2021 - 2025 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -32,7 +32,7 @@ internal struct _Document {
   var _isDirty: Bool
 
   /// Prevent losing data by saving the output file every handful of seconds.
-  let _savePeriod = Time(10) // FIXME Maybe replace this with a command line option
+  let _savePeriod: Time = .seconds(10) // FIXME Maybe replace this with a command line option
 
   init(
     url: URL,

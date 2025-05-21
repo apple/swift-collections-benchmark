@@ -26,20 +26,21 @@ public struct Sample: Sendable, Equatable {
   public var count: Int { _times.count }
   public var minimum: Time? { _times.min() }
   public var maximum: Time? { _times.max() }
-  public var sum: Time { Time(_times.reduce(0.0, { $0 + $1.seconds })) }
+  public var sum: Time { Time(_times.reduce(Duration.zero, { $0 + $1.duration })) }
   public var sumSquared: Double { _times.reduce(0.0, { $0 + $1.seconds * $1.seconds })}
   
   public var mean: Time? {
     guard _times.count > 0 else { return nil }
-    return Time(sum.seconds / Double(_times.count))
+    return Time(sum.duration / _times.count)
   }
   
   public var standardDeviation: Time? {
     guard _times.count >= 2 else { return nil }
+    // FIXME: Redo this using fixed-point arithmetic
     let c = Double(_times.count)
     let sum = self.sum.seconds
     let s2: Double = (c * self.sumSquared - sum * sum) / (c * (c - 1))
-    return Time(s2.magnitude.squareRoot())
+    return .seconds(s2.magnitude.squareRoot())
   }
   
   public mutating func add(_ time: Time) {
