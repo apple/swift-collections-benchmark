@@ -15,10 +15,10 @@ public struct Benchmark {
   public let title: String
   internal var _tasks: _SimpleOrderedDictionary<String, AnyTask> = [:]
   internal var _inputGenerators: [_TypeBox: (Int) -> Any] = [:]
-  private let _executionContext = _ExecutionContext.shared
 
   public init(title: String = "") {
     self.title = title
+    _setUpExecutionCheck()
     registerInputGenerator(for: Int.self) { size in
       size
     }
@@ -54,10 +54,6 @@ public struct Benchmark {
         Int.random(in: 0 ..< i + 1, using: &generator)
       }
     }
-  }
-
-  internal func _markAsExecuted() {
-    _executionContext._hasExecuted = true
   }
 
   public func allTaskNames() -> [String] {
