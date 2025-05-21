@@ -1,5 +1,8 @@
 # Swift Collections Benchmark
 
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fapple%2Fswift-collections-benchmark%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/apple/swift-collections-benchmark)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fapple%2Fswift-collections-benchmark%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/apple/swift-collections-benchmark)
+
 This package lets you collect and easily visualize performance data about data structure implementations and collection algorithms. It was created to help develop the [Swift Collections] package, but it's useful for so much more!
 
 [Swift Collections]: https://github.com/apple/swift-collections
