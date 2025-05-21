@@ -25,9 +25,9 @@ extension Time {
   public static let millisecond = Time(.milliseconds(1))
   public static let microsecond = Time(.microseconds(1))
   public static let nanosecond = Time(.nanoseconds(1))
-  public static let picosecond = Time(.init(attoseconds: 1_000_000))
-  public static let femtosecond = Time(.init(attoseconds: 1_000))
-  public static let attosecond = Time(.init(attoseconds: 1))
+  public static let picosecond = Time(.init(_attoseconds: 1_000_000))
+  public static let femtosecond = Time(.init(_attoseconds: 1_000))
+  public static let attosecond = Time(.init(_attoseconds: 1))
   public static let zero = Time(.zero)
 }
 
@@ -43,7 +43,7 @@ extension Time {
   }
 
   public var seconds: Double {
-    Double(duration.attoseconds) / 1e18
+    duration._seconds
   }
 }
 
