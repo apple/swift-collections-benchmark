@@ -9,6 +9,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+import Foundation // For String(format:)
 import ArgumentParser
 
 public struct Size: Sendable, RawRepresentable {

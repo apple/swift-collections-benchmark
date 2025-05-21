@@ -9,6 +9,8 @@
 //
 //===----------------------------------------------------------------------===//
 
+import Foundation // For String(format:)
+
 public struct Sample: Sendable, Equatable {
   // Sorted array of measured durations.
   internal var _times: _SimpleSortedBag<Time> = []

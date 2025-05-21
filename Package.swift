@@ -19,6 +19,7 @@ import PackageDescription
 //
 //     swift build -Xswiftc -DSOME_SETTING
 var settings: [SwiftSetting]? = [
+  .enableUpcomingFeature("MemberImportVisibility"),
 ]
 
 let package = Package(
