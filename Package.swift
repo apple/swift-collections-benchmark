@@ -1,9 +1,9 @@
-// swift-tools-version:5.3
+// swift-tools-version:6.1
 //===----------------------------------------------------------------------===//
 //
 // This source file is part of the Swift Collections open source project
 //
-// Copyright (c) 2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2021 - 2025 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -17,22 +17,13 @@ import PackageDescription
 // To use enable them, uncomment the corresponding lines or define them
 // from the package manager command line:
 //
-//     swift build -Xswiftc -DUSE_FOUNDATION_DATE
+//     swift build -Xswiftc -DSOME_SETTING
 var settings: [SwiftSetting]? = [
-
-  // On Apple platforms, measure time using Foundation's `Date` instead of
-  // the default method. This is useful when you want to run benchmarks
-  // on an operating system that predates the introduction of the function
-  // this package would otherwise be using.
-//  .define("USE_FOUNDATION_DATE"),
 ]
-
-// Prevent SPM 5.3 from throwing an error on empty settings arrays.
-// (This has been fixed in 5.4.)
-if settings?.isEmpty == true { settings = nil }
 
 let package = Package(
   name: "swift-collections-benchmark",
+  platforms: [.macOS(.v15), .iOS(.v18), .watchOS(.v11), .tvOS(.v18), .visionOS(.v2)],
   products: [
     .library(name: "CollectionsBenchmark", targets: ["CollectionsBenchmark"]),
   ],
