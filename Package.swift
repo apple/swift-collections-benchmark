@@ -18,8 +18,9 @@ import PackageDescription
 // from the package manager command line:
 //
 //     swift build -Xswiftc -DSOME_SETTING
-var settings: [SwiftSetting]? = [
+let settings: [SwiftSetting] = [
   .enableUpcomingFeature("MemberImportVisibility"),
+  .enableUpcomingFeature("StrictConcurrency"),
 ]
 
 let package = Package(
