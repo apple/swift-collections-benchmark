@@ -20,7 +20,7 @@ func _expectEqual<
 >(
   _ actual: S1,
   _ expected: S2,
-  file: StaticString = #file,
+  file: StaticString = #filePath,
   line: UInt = #line
 ) where
   S1.Element == (key: A, value: B),
