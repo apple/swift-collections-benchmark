@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Collections open source project
 //
-// Copyright (c) 2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2021 - 2025 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -11,18 +11,18 @@
 
 import Foundation
 
-public struct Stroke: Hashable, Codable {
-  public enum CapStyle: String, Hashable, Codable {
+public struct Stroke: Sendable, Hashable, Codable {
+  public enum CapStyle: String, Sendable, Hashable, Codable {
     case butt
     case round
     case square
   }
-  public enum JoinStyle: String, Hashable, Codable {
+  public enum JoinStyle: String, Sendable, Hashable, Codable {
     case miter
     case round
     case bevel
   }
-  public struct Dash: Hashable, Codable {
+  public struct Dash: Sendable, Hashable, Codable {
     public var style: [Double]
     public var phase: Double = 0
   }

@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Collections open source project
 //
-// Copyright (c) 2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2021 - 2025 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -21,6 +21,9 @@ struct _SimpleSortedDictionary<Key: Comparable, Value> {
     _elements = []
   }
 }
+
+extension _SimpleSortedDictionary: Sendable
+where Key: Sendable, Value: Sendable {}
 
 extension _SimpleSortedDictionary {
   struct _Item: Comparable {
@@ -42,6 +45,9 @@ extension _SimpleSortedDictionary {
     }
   }
 }
+
+extension _SimpleSortedDictionary._Item: Sendable
+where Key: Sendable, Value: Sendable {}
 
 extension _SimpleSortedDictionary {
   init<S: Sequence>(

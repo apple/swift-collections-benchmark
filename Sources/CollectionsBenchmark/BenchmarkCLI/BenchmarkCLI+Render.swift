@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Collections open source project
 //
-// Copyright (c) 2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2021 - 2025 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -15,10 +15,12 @@ import ArgumentParser
 
 extension _BenchmarkCLI {
   internal struct Render: ParsableCommand {
-    static var configuration = CommandConfiguration(
-      commandName: "render",
-      abstract: "Generate charts from benchmark results.")
-    
+    static var configuration: CommandConfiguration {
+      CommandConfiguration(
+        commandName: "render",
+        abstract: "Generate charts from benchmark results.")
+    }
+
     @Argument(help: "Path to a benchmark results document.")
     var input: String
     

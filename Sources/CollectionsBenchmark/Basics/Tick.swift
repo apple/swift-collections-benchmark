@@ -11,8 +11,8 @@
 
 #if !USE_FOUNDATION_DATE && (os(macOS) || os(iOS) || os(watchOS) || os(tvOS))
 import Foundation // For the side effect of reexporting Darwin/Glibc
+public struct Tick: Sendable {
 
-public struct Tick {
   internal let _value: timespec
 
   internal init(_value: timespec) {
