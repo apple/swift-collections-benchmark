@@ -19,7 +19,7 @@ final class UtilitiesTests: XCTestCase {
       _ input: String,
       _ output: String,
       windows: String? = nil,
-      file: StaticString = #file,
+      file: StaticString = #filePath,
       line: UInt = #line
     ) {
       #if os(Windows)

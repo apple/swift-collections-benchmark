@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Collections open source project
 //
-// Copyright (c) 2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2021 - 2025 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -12,7 +12,7 @@
 import ArgumentParser
 
 extension Sample {
-  public enum Statistic: Hashable {
+  public enum Statistic: Sendable, Hashable {
     case maximum
     case sigma(Int)
     case mean
@@ -25,7 +25,7 @@ extension Sample {
     case .maximum: return maximum
     case .sigma(let n):
       guard let sigma = standardDeviation else { return nil }
-      return Time(mean!.seconds + Double(n) * sigma.seconds)
+      return .seconds(mean!.seconds + Double(n) * sigma.seconds)
     case .mean: return mean
     case .minimum: return minimum
     case .none: return nil

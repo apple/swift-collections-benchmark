@@ -9,8 +9,8 @@
 //
 //===----------------------------------------------------------------------===//
 
+@preconcurrency import Foundation // for setbuf
 import ArgumentParser
-import Foundation // for setbuf
 
 extension Benchmark {
   public func main() {

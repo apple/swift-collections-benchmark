@@ -21,10 +21,10 @@ extension _BenchmarkCLI.Library {
     }
 
     @Option(
-      help: "Path to a library configuration file in JSON format. (default: built-in library)",
+      help: "Path to a library configuration file in JSON format.",
       completion: .file(extensions: ["json"]),
       transform: { str in FilePath(str) })
-    var library: FilePath?
+    var library: FilePath
 
     @Flag(help: "List all tasks included in the library.")
     var tasks = false
