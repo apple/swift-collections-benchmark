@@ -1,4 +1,4 @@
-# Swift Collections Benchmark
+# Benchmarking Support for [Swift Collections]
 
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fapple%2Fswift-collections-benchmark%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/apple/swift-collections-benchmark)
 [![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fapple%2Fswift-collections-benchmark%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/apple/swift-collections-benchmark)
@@ -73,24 +73,24 @@ For a tour of the features provided by this library, please be sure check out ou
 
 [guide]: Documentation/01%20Getting%20Started.md
 
-## Project Status
+## Project status
 
-Swift Collections Benchmark is intended primarily as a developer tool, rather than something that would be used in production apps.
+This package is intended primarily to be a developer tool, rather than something that would be used in production apps.
 
-It exposes a source-level API and a command line interface, neither of which are technically stable yet. After an initial period of experimentation, we expect to stabilize both interfaces. Until then, new releases may sometimes come with changes that might break existing benchmark definitions, or that may change the command line interface in ways that could break existing scripts. We'll try our best to keep this to a minimum, though (or mitigate with a multi-release deprecation period), even during this chaotic initial period.
+This package is not source stable; its API surface, its command line interface, and the format/contents of the files it generates is subject to change between tags, sometimes in ways that breaks clients that were written for previous releases.
 
-## Adding Swift Collections Benchmark as a Dependency
+## Adding this package as a dependency
 
 To use this package in a SwiftPM project, add the following line to the dependencies in your `Package.swift` file:
 
 ```swift
-.package(url: "https://github.com/apple/swift-collections-benchmark", from: "0.0.1"),
+.package(url: "https://github.com/apple/swift-collections-benchmark", from: "0.0.4"),
 ```
 
 In the typical case, you'll want to set up a standalone executable target that is dedicated to benchmarking:
 
 ```swift
-// swift-tools-version:5.3
+// swift-tools-version:6.1
 import PackageDescription
 
 let package = Package(
@@ -113,7 +113,7 @@ let package = Package(
 )
 ```
 
-## Contributing to Swift Collections Benchmark
+## Contributing to this package
 
 ### Asking questions
 
@@ -127,7 +127,7 @@ If you find something that looks like a bug, please open a [Bug Report][bugrepor
 
 [bugreport]: https://github.com/apple/swift-collections-benchmark/issues/new?assignees=&labels=bug&template=BUG_REPORT.md
 
-### Fixing a bug or making a small improvement
+### Fixing a bug
 
 1. [Submit a PR][PR] with your change. If there is an [existing issue][issues] for the bug you're fixing, please include a reference to it.
 2. Make sure to add test coverage for whatever changes you are making (if possible).
@@ -137,7 +137,7 @@ If you find something that looks like a bug, please open a [Bug Report][bugrepor
 
 (Note: The package doesn't currently come with many tests, reflecting its origins as a supporting project -- we strive to improve that!)
 
-### Proposing a small enhancement
+### Proposing an enhancement
 
 1. Raise a [Feature Request][enhancement]. Discuss why it would be important to implement it.
 2. Submit a PR with your implementation, participate in the review discussion.
@@ -146,20 +146,13 @@ If you find something that looks like a bug, please open a [Bug Report][bugrepor
 
 [enhancement]: https://github.com/apple/swift-collections-benchmark/issues/new?assignees=&labels=enhancement&template=FEATURE_REQUEST.md
 
-### Proposing a larger feature
-
-1. Raise a [Feature Request][enhancement], or start a topic on the [forum]. Discuss why it would be important to implement it, and potential implementation strategies.
-2. Submit a PR with your implementation, and participate in the review discussion. Sometimes we may need to go through several revisions! This is fine -- it makes the end result that much better.
-3. When there is a consensus that the feature is desirable, and the implementation works well, it will be merged. 
-4. Celebrate! 
-
 ### Licensing
 
 By submitting a pull request, you represent that you have the right to license your contribution to Apple and the community, and agree by submitting the patch that your contributions are licensed under the [Swift License](https://swift.org/LICENSE.txt), a copy of which is [provided in this repository](LICENSE.txt).
 
 ### Code of Conduct
 
-Like all Swift.org projects, we would like the Swift Collections Benchmark project to foster a diverse and friendly community. We expect contributors to adhere to the [Swift.org Code of Conduct](https://swift.org/code-of-conduct/). A copy of this document is [available in this repository][coc].
+Like all Swift.org projects, we would like this package to foster a diverse and friendly community. We expect contributors to adhere to the [Swift.org Code of Conduct](https://swift.org/code-of-conduct/). A copy of this document is [available in this repository][coc].
 
 [coc]: CODE_OF_CONDUCT.md
 
