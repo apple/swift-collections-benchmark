@@ -104,7 +104,7 @@ let package = Package(
   ],
   targets: [
     // ... other targets ...
-    .target(
+    .executableTarget(
       name: "MyBenchmark",
       dependencies: [
         .product(name: "CollectionsBenchmark", package: "swift-collections-benchmark"),
