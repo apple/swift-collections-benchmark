@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Collections open source project
 //
-// Copyright (c) 2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2021 - 2025 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -14,7 +14,7 @@ import SystemPackage
 import ArgumentParser
 
 /// A value containing a set of benchmark results.
-public struct BenchmarkResults {
+public struct BenchmarkResults: Sendable {
   internal typealias _Results = _SimpleOrderedDictionary<TaskID, TaskResults>
 
   internal var _tasks: _Results = [:]

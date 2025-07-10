@@ -4,3 +4,5 @@
 /*.xcodeproj
 xcuserdata/
 /Results
+/Documentation/Example/.build
+/Documentation/Example/Package.resolved

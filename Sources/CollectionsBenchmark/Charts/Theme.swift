@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Collections open source project
 //
-// Copyright (c) 2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2021 - 2025 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -13,8 +13,8 @@ import Foundation
 import SystemPackage
 import ArgumentParser
 
-public struct Theme: Codable {
-  public enum LegendPosition: String, Codable {
+public struct Theme: Sendable, Codable {
+  public enum LegendPosition: String, Sendable, Codable {
     case hidden
     case topLeft
     case topRight
@@ -64,7 +64,7 @@ public struct Theme: Codable {
 }
 
 extension Theme {
-  public struct CurveTheme: Hashable, Codable {
+  public struct CurveTheme: Sendable, Hashable, Codable {
     public var color: Color
     public var lineWidth: Double
 
@@ -129,7 +129,7 @@ extension Theme {
 }
 
 extension Theme {
-  public static var knownThemes: Dictionary<String, Theme> = [
+  public static let knownThemes: Dictionary<String, Theme> = [
     "light": Theme.light,
     "dark": Theme.dark,
   ]

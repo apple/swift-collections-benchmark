@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Collections open source project
 //
-// Copyright (c) 2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2021 - 2025 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -31,7 +31,7 @@ extension Benchmark {
     public var iterations: Int = 3
 
     /// Repeat each task for at least this number of seconds.
-    public var minimumDuration = Time(0.01)
+    public var minimumDuration: Time = .seconds(0.01)
 
     /// Stop repeating a particular task/size measurement after this amount of time has passed.
     /// (When this is a finite positive value, tasks may get run for less than `iterations` times.)
@@ -173,7 +173,7 @@ extension Benchmark.Options {
 
     @Option(name: .customLong("min-duration"),
             help: "Repeat each task for at least this number of seconds")
-    public var minimumDuration = Time(0.01)
+    public var minimumDuration: Time = .seconds(0.01)
 
     @Option(name: .customLong("max-duration"),
             help: "Stop repeating tasks if this amount of time has elapsed (default: no limit)")

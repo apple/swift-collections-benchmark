@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Collections open source project
 //
-// Copyright (c) 2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2021 - 2025 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -47,14 +47,8 @@ extension Benchmark.ChartLibrary {
 }
 
 extension Benchmark {
-  internal func _loadLibrary(_ path: FilePath?) throws -> ChartLibrary {
-    if let path = path {
-      return try Benchmark.ChartLibrary.load(from: path)
-    }
-    if let library = self.chartLibrary {
-      return library
-    }
-    throw Benchmark.Error("No predefined library configuration")
+  internal func _loadLibrary(_ path: FilePath) throws -> ChartLibrary {
+    try Benchmark.ChartLibrary.load(from: path)
   }
 }
 

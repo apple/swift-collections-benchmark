@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift Collections open source project
 //
-// Copyright (c) 2021 Apple Inc. and the Swift project authors
+// Copyright (c) 2021 - 2025 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -15,12 +15,10 @@ public struct Benchmark {
   public let title: String
   internal var _tasks: _SimpleOrderedDictionary<String, AnyTask> = [:]
   internal var _inputGenerators: [_TypeBox: (Int) -> Any] = [:]
-  private let _executionContext = _ExecutionContext.shared
-
-  public var chartLibrary: ChartLibrary? = nil
 
   public init(title: String = "") {
     self.title = title
+    _setUpExecutionCheck()
     registerInputGenerator(for: Int.self) { size in
       size
     }
@@ -56,10 +54,6 @@ public struct Benchmark {
         Int.random(in: 0 ..< i + 1, using: &generator)
       }
     }
-  }
-
-  internal func _markAsExecuted() {
-    _executionContext._hasExecuted = true
   }
 
   public func allTaskNames() -> [String] {
