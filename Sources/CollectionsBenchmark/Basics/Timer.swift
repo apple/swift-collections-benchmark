@@ -61,14 +61,15 @@ public struct Timer {
   }
   
   @inline(never)
-  public mutating func measure(_ body: () -> Void) {
+  public mutating func measure<T>(_ body: () -> T) -> T {
     precondition(_expectNested != false,
                  "Inconsistent timer use: Unexpected call to Timer.measure")
     let start = Tick.now
-    body()
+    let result = body()
     let end = Tick.now
     elapsedTime = end.elapsedTime(since: start)
     _expectNested = false
+    return result
   }
 }
 
