@@ -11,6 +11,24 @@
 
 import SystemPackage
 
+internal func _complaintMessage(
+  _ things: [Any],
+  separator: String = " ",
+  terminator: String = "\n"
+) -> String {
+  var message = ""
+  var first = true
+  for thing in things {
+    if !first {
+      message += separator
+    }
+    message += "\(thing)"
+    first = false
+  }
+  message += terminator
+  return message
+}
+
 internal func _complain(_ message: String) {
   let stderr = FileDescriptor(rawValue: 2)
   try! stderr.writeAll(message.utf8)
@@ -30,16 +48,5 @@ public func complain(
   separator: String = " ",
   terminator: String = "\n"
 ) {
-  var message = ""
-  var first = true
-  for thing in things {
-    if first {
-      message += separator
-      first = false
-    }
-    message += "\(thing)"
-  }
-  message += terminator
-
-  _complain(message)
+  _complain(_complaintMessage(things, separator: separator, terminator: terminator))
 }
