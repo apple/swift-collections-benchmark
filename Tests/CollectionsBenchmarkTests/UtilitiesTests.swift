@@ -53,4 +53,13 @@ final class UtilitiesTests: XCTestCase {
       windows: "Some_systems_have_trouble_with_reasonable_filenames_like_this")
     check("Hi/:/*/bye", "Hi_:_*_bye", windows: "Hi_bye")
   }
+
+  func testComplainVariadicUsesSeparatorBetweenItems() {
+    XCTAssertEqual(
+      _complaintMessage(
+        ["alpha", "beta", "gamma"],
+        separator: "|",
+        terminator: ""),
+      "alpha|beta|gamma")
+  }
 }
