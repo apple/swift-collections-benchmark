@@ -154,7 +154,7 @@ By submitting a pull request, you represent that you have the right to license y
 
 Like all Swift.org projects, we would like this package to foster a diverse and friendly community. We expect contributors to adhere to the [Swift.org Code of Conduct](https://swift.org/code-of-conduct/). A copy of this document is [available in this repository][coc].
 
-[coc]: CODE_OF_CONDUCT.md
+[coc]: https://github.com/apple/.github/blob/main/CODE_OF_CONDUCT.md
 
 ### Contacting the maintainers
 
